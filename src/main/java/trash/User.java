@@ -1,4 +1,4 @@
-package com.DoAnChuyenNganh.UngDungDatVeXemPhim.Models;
+package trash;
 
 import java.sql.Date;
 
