@@ -1,6 +1,5 @@
 package com.DoAnChuyenNganh.UngDungDatVeXemPhim.Controllers;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,41 +17,51 @@ import com.DoAnChuyenNganh.UngDungDatVeXemPhim.Services.AccountService;
 import com.DoAnChuyenNganh.UngDungDatVeXemPhim.dto.request.ApiResponse;
 import com.DoAnChuyenNganh.UngDungDatVeXemPhim.dto.request.RegisterAccountRequest;
 import com.DoAnChuyenNganh.UngDungDatVeXemPhim.dto.request.UpdateAccountRequest;
+import com.DoAnChuyenNganh.UngDungDatVeXemPhim.dto.response.AccountResponse;
 
 import jakarta.validation.Valid;
-
-
 
 @RestController
 @RequestMapping("/accounts")
 public class AccountController {
 	@Autowired
 	private AccountService accountService;
-	
+
 	@GetMapping
-	public List<Accounts> getAllAccount() {
-		return accountService.getAllAccount();
+	public ApiResponse<List<Accounts>> getAllAccount() {
+		return ApiResponse.<List<Accounts>>builder()
+				.result(accountService.getAllAccount())
+				.build();
 	}
+
 	@GetMapping("/{userName}")
-	public Accounts getAccount(@PathVariable String userName) {
-		return accountService.getAccount(userName);
+	public ApiResponse<AccountResponse> getAccount(@PathVariable String userName) {
+		return ApiResponse.<AccountResponse>builder()
+				.result(accountService.getAccount(userName))
+				.build();
 	}
-	
+
 	@PostMapping("/register")
-	public ApiResponse<Accounts> registerAccount(@RequestBody @Valid RegisterAccountRequest request){
-		ApiResponse<Accounts> apiResponse = new ApiResponse<>();
-		apiResponse.setResult(accountService.createAccount(request));
-		return apiResponse;
+	public ApiResponse<AccountResponse> registerAccount(@RequestBody @Valid RegisterAccountRequest request) {
+		return ApiResponse.<AccountResponse>builder()
+				.result(accountService.createAccount(request))
+				.build();
 	}
-	
-	
+
 	@PutMapping("/{userName}")
-	public Accounts updateAccount(@PathVariable @Valid String userName, @RequestBody UpdateAccountRequest request) {
-		return accountService.updateAccount(userName, request);
+	public ApiResponse<AccountResponse> updateAccount(@PathVariable @Valid String userName, @RequestBody UpdateAccountRequest request) {
+		return ApiResponse.<AccountResponse>builder()
+				.result(accountService.updateAccount(userName, request))
+				.build();
 	}
+
 	@DeleteMapping("/{userName}")
-	public String deleteAccount(@PathVariable String userName) {
+	public ApiResponse<String> deleteAccount(@PathVariable String userName) {
 		accountService.deleteAccount(userName);
-		return "Tai khoan da bi xoa";
+		return ApiResponse.<String>builder()
+				.result("Xoa " + userName + " thanh cong!!")
+				.build()  ;
 	}
+	
+	
 }

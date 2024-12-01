@@ -1,17 +1,21 @@
 package com.DoAnChuyenNganh.UngDungDatVeXemPhim.Services;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.DoAnChuyenNganh.UngDungDatVeXemPhim.Entity.Accounts;
+import com.DoAnChuyenNganh.UngDungDatVeXemPhim.Enums.Role;
 import com.DoAnChuyenNganh.UngDungDatVeXemPhim.Exception.AppException;
 import com.DoAnChuyenNganh.UngDungDatVeXemPhim.Exception.ErrorCode;
+import com.DoAnChuyenNganh.UngDungDatVeXemPhim.Mapper.AccountMapper;
 import com.DoAnChuyenNganh.UngDungDatVeXemPhim.Repo.AccountRepo;
 import com.DoAnChuyenNganh.UngDungDatVeXemPhim.dto.request.RegisterAccountRequest;
 import com.DoAnChuyenNganh.UngDungDatVeXemPhim.dto.request.UpdateAccountRequest;
+import com.DoAnChuyenNganh.UngDungDatVeXemPhim.dto.response.AccountResponse;
 
 import jakarta.transaction.Transactional;
 
@@ -19,6 +23,10 @@ import jakarta.transaction.Transactional;
 public class AccountService {
 	@Autowired
 	private AccountRepo accountRepo;
+	@Autowired
+	private AccountMapper accountMapper;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	// lấy danh sách tài khoản
 	public List<Accounts> getAllAccount() {
@@ -36,17 +44,18 @@ public class AccountService {
 	}
 
 	// Tìm tài khoản
-	public Accounts getAccount(String userName) {
-		return accountRepo.findByuserName(userName).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+	public AccountResponse getAccount(String userName) {
+		return accountMapper.toAccountResponse(accountRepo.findByuserName(userName).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND)));
 	}
+	
 
 	// Cập nhật tài khoản
-	public Accounts updateAccount(String userName, UpdateAccountRequest request) {
-		Accounts account = getAccount(userName);
-		account.setEmail(request.getEmail());
-		account.setPassword(request.getPassword());
+	public AccountResponse updateAccount(String userName, UpdateAccountRequest request) {
+		Accounts account = accountRepo.findByuserName(userName).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-		return accountRepo.save(account);
+		accountMapper.updateAccount(account, request);
+
+		return accountMapper.toAccountResponse(accountRepo.save(account)) ;
 	}
 
 	// Xóa tài khoản
@@ -56,7 +65,7 @@ public class AccountService {
 	}
 
 	// Tạo tài khoản
-	public Accounts createAccount(RegisterAccountRequest request) {
+	public AccountResponse createAccount(RegisterAccountRequest request) {
 
 		if (existsByuserName(request.getUserName())) {
 			throw new AppException(ErrorCode.ACCOUNT_USERNAME_EXISTED);
@@ -65,14 +74,11 @@ public class AccountService {
 			throw new AppException(ErrorCode.ACCOUNT_EMAIL_EXISTED);
 		}
 
-		Accounts account = new Accounts();
-		Date date = new Date();
-		account.setUserName(request.getUserName());
-		account.setEmail(request.getEmail());
-		account.setPassword(request.getPassword());
-		account.setCreatedAt(date);
+		Accounts account = accountMapper.toAccounts(request);
+		account.setPassword(passwordEncoder.encode(request.getPassword()));
+		account.setCreatedAt(LocalDateTime.now());
 		account.setStatus(1);
-		account.setAccountRole("User");
-		return accountRepo.save(account);
+		account.setAccountRole(String.valueOf(Role.USER.name()));
+		return accountMapper.toAccountResponse(accountRepo.save(account)) ;
 	}
 }
