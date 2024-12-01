@@ -6,6 +6,7 @@ public enum ErrorCode {
 	ACCOUNT_EMAIL_EXISTED(402,"Email da ton tai"),
 	ACCOUNT_NOT_FOUND(403,"Khong tim thay tai khoan"),
 	ACCOUNT_PASSWORD_INVALID(404,"Mat khau phai tu 8 ky tu tro len"),
+	LOGIN_FAILED(405,"Dang nhap that bai"),
 	;
 	
 	private int code;
