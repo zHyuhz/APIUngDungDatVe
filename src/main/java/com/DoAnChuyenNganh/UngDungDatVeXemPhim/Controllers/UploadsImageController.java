@@ -27,7 +27,7 @@ public class UploadsImageController {
 
 	                // Chuyển đổi dữ liệu thành ByteArrayResource để trả về
 	                ByteArrayResource byteArrayResource = new ByteArrayResource(buffer);
-
+	                
 	                // Trả về ResponseEntity chứa ảnh
 	                return ResponseEntity.ok()
 	                        .contentLength(buffer.length)

@@ -1,7 +1,7 @@
 package com.DoAnChuyenNganh.UngDungDatVeXemPhim.Services;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStream;import java.lang.annotation.Repeatable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.DoAnChuyenNganh.UngDungDatVeXemPhim.Entity.Movies;
+import com.DoAnChuyenNganh.UngDungDatVeXemPhim.Exception.AppException;
+import com.DoAnChuyenNganh.UngDungDatVeXemPhim.Exception.ErrorCode;
 import com.DoAnChuyenNganh.UngDungDatVeXemPhim.Mapper.MoviesMapper;
 import com.DoAnChuyenNganh.UngDungDatVeXemPhim.Repo.MovieRepo;
 import com.DoAnChuyenNganh.UngDungDatVeXemPhim.dto.request.MovieRequest;
@@ -118,5 +120,9 @@ public class MovieService {
 	//Xóa phim bằng ID
 	public void deleteMovie(int movieId) {
 		movieRepo.deleteById(movieId);
+	}
+	//Tìm bằng id
+	public MovieResponse  findMovieByID(int movieId) {
+		return moviesMapper.toMovieResponse(movieRepo.findById(movieId).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND)))	;
 	}
 }
