@@ -16,7 +16,7 @@ public class MovieResponse {
 
 	private int movie_id;
 
-	private String movie_name;
+	private String movieName;
 
 	private String movie_description;
 

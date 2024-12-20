@@ -92,10 +92,16 @@ public class MovieController {
 	    }
 
 	  @DeleteMapping("/{movieId}")
-		public ApiResponse<String> deleteAccount(@PathVariable int movieId) {
+		public ApiResponse<String> deleteMovie(@PathVariable int movieId) {
 			movieService.deleteMovie(movieId);
 			return ApiResponse.<String>builder()
 					.result("Xoa " + movieId + " thanh cong!!")
 					.build()  ;
 		}
+	  @GetMapping("/{movieId}")
+			public ApiResponse<MovieResponse> findMovieByID(@PathVariable int movieId) {
+				return ApiResponse.<MovieResponse>builder()
+						.result(	movieService.findMovieByID(movieId))
+						.build()  ;
+			}
 }
